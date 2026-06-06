@@ -28,7 +28,7 @@ Right click your profile in Discord to copy your user ID. Right click the target
 - Open the generated URL and authorize it to your server
 
 **5. Run**
-- Either host the bot on a cheap online hosting service, or run it from your desktop with
+- Either host the bot on a cheap online hosting service, or run it from your coding environment with
 ```bash
 python bot.py
 ```
