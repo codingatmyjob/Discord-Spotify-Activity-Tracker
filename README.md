@@ -1,6 +1,6 @@
 # Discord Spotify Activity Tracker
 
-A Discord bot that watches a specific user's presence and posts their Spotify activity to a channel whenever they are live on Twitch.
+A Discord bot that watches a specific user's presence and posts their Spotify activity to a channel whenever they are live on Twitch. Important to preface that while this is a 'bot' it operates as a Client, with no command capabilities.
 
 ## Setup
 
