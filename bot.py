@@ -85,9 +85,13 @@ async def on_ready():
 # ---- PRESENCE TRACKING ----
 @bot.event
 async def on_presence_update(before: discord.Member, after: discord.Member):
+    # before = the member's presence state before the update
+    # after = the member's presence state after the update
+    # discord fires this event any time a member's presence changes, giving us both snapshots to compare
     if after.id != YOUR_USER_ID:
         return
 
+    # grab the spotify activity from both snapshots so we can compare them
     before_spotify = next((a for a in before.activities if isinstance(a, discord.Spotify)), None)
     after_spotify = next((a for a in after.activities if isinstance(a, discord.Spotify)), None)
 
@@ -96,15 +100,23 @@ async def on_presence_update(before: discord.Member, after: discord.Member):
     print(f"All activities: {[(type(a).__name__, a.name if hasattr(a, 'name') else '') for a in after.activities]}")
 
     # ---- SPOTIFY (only active during Twitch stream) ----
+    # re-fetch the member's live state rather than relying on the event snapshot
+    # discord can fire separate presence events for streaming and spotify, so after.activities
+    # may not contain both at the same time — the live check guarantees accuracy
     member = get_member()
     live_streaming = is_streaming(member.activities if member else [])
     print(f"is_streaming (live check): {live_streaming}")
 
+    # don't care about spotify if we're not streaming
     if not live_streaming:
         return
 
+    # no spotify activity in the after snapshot, nothing to post
     if not after_spotify:
         return
+
+    # track_id comparison prevents posting the same song twice
+    # discord will sometimes fire presence updates for the same song mid-playback
     if before_spotify and before_spotify.track_id == after_spotify.track_id:
         return
 
@@ -133,6 +145,5 @@ async def on_presence_update(before: discord.Member, after: discord.Member):
         print(f"ERROR: Failed to post Spotify embed — {e}")
     except Exception as e:
         print(f"ERROR: Unexpected error in Spotify tracking — {e}")
-
 
 bot.run(token)
